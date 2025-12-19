@@ -3,33 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VibeStream Pro | Global Music</title>
+    <title>VibeStream | Global & Local Music</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background: radial-gradient(circle at top left, #0f172a, #000000); min-height: 100vh; overflow: hidden; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .song-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .song-card:hover { transform: scale(1.05); background: rgba(255, 255, 255, 0.1); shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
-        .progress-glow { box-shadow: 0 0 10px #22c55e; }
-        ::-webkit-scrollbar { width: 5px; }
+        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .song-card:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-5px); transition: 0.3s; }
+        ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
     </style>
 </head>
-<body class="text-gray-100 font-sans">
+<body>
 
     <div class="flex h-screen p-4 gap-4">
-        <aside class="w-72 glass rounded-3xl p-6 flex flex-col hidden lg:flex">
-            <div class="flex items-center space-x-3 mb-10 px-2">
-                <div class="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-600 rounded-xl shadow-lg flex items-center justify-center">
-                    <i class="fa fa-play text-white"></i>
-                </div>
-                <h1 class="text-2xl font-black tracking-tighter">VIBE<span class="text-green-500">S</span></h1>
-            </div>
-            
-            <nav class="space-y-2 flex-1">
-                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-4 px-2">Discover Categories</p>
-                <button onclick="smartSearch('Hollywood Hits')" class="flex items-center space-x-4 w-full p-3 rounded-xl hover:bg-white/5 transition text-gray-400 hover:text-green-400">
-                    <i class="fa fa-clapperboard w-5"></i><span class="font-medium">Hollywood</span>
+        <aside class="w-64 glass rounded-3xl p-6 hidden md:flex flex-col">
+            <h1 class="text-2xl font-black mb-10 text-green-500 tracking-tighter">VIBESTREAM</h1>
+            <nav class="space-y-4">
+                <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Follow Genres</p>
+                <button onclick="smartSearch('Latest Tamil Songs')" class="flex items-center space-x-3 text-gray-400 hover:text-white w-full transition">
+                    <i class="fa fa-bolt"></i><span>Kollywood (Tamil)</span>
                 </button>
-                <button onclick="smartSearch('Bollywood Chartbusters')" class="flex items-center space-x-4 w-full p-3 rounded-xl hover:bg-white/5
+                <button onclick="smartSearch('Trending English Pop')" class="flex items-center space-x-3 text-gray-400 hover:text-white w-full transition">
+                    <i class="fa fa-globe"></i><span>Hollywood (English)</span>
+                </button>
+                <button onclick="smartSearch('Latest Hindi Hits')" class="flex items-center space-x-3 text-gray-400 hover:text-white w-full transition">
+                    <i class="fa fa-film"></i><span>Bollywood (Hindi)</span>
+                </button>
+            </nav>
+        </aside>
+
+        <main class="flex-1 flex flex-col">
+            <header class="mb-8">
+                <div class="relative w-full max-w-xl">
+                    <i class="fa fa-search absolute left-4 top-3.5 text-gray-500"></i>
+                    <input type="text" id="searchInput" onkeypress="if(event.key==='Enter') smartSearch(this.value)" 
+                           placeholder="Search any song in the world..." 
+                           class="w-full bg-zinc-900 border-none rounded-full py-3 px-12 focus:ring-2 focus:ring-green-500">
+                </div>
+            </header>
+
+            <h2 id="listTitle" class="text-3xl font-bold mb-6">Trending Now</h2>
+
+            <div id="results" class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 overflow-y-auto pb-40">
+                </div>
+
+            <footer class="absolute bottom-6 left-6 right-6 glass rounded-3xl p-4 flex items-center justify-between shadow-2xl">
+                <div class="flex items-center w-1/4">
+                    <img id="p-art" src="https://via.placeholder.com/50" class="w-12 h-12 rounded-lg object-cover mr-4">
+                    <div class="truncate">
+                        <div id="p-title" class="font-bold text-sm truncate">No Song Playing</div>
+                        <div id="p-artist" class="text-xs text-gray-500 truncate">Select a track</div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center flex-1 px-10">
+                    <div class="flex items-center space-x-6 mb-2">
+                        <button onclick="changeTrack(-1)" class="hover:text-green-500"><i class="fa fa-step-backward"></i></button>
+                        <button onclick="togglePlay()" id="playBtn" class="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center">
+                            <i class="fa fa-play ml-1"></i>
+                        </button>
+                        <button onclick="changeTrack(1)" class="hover:text-green-500"><i class="fa fa-step-forward"></i></button>
+                    </div>
+                    <div class="w-full flex items-center space-x-2">
+                        <span id="time-c" class="text-[10px] text-gray-500">0:00</span>
+                        <div class="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
+                            <div id="progress" class="h-full bg-green-500 w-0"></div>
+                        </div>
+                        <span id="time-t" class="text-[10px] text-gray-500">0:00</span>
+                    </div>
+                </div>
+
+                <div class="w-1/4 flex justify-end space-x-3">
+                    <i class="fa fa-volume-up text-gray-500 text-sm"></i>
+                    <input type="range" oninput="setVol(this.value)" class="w-20 accent-green-500">
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <div id="player" class="hidden"></div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyB6py7f_H_2QN78RD3wIVZPL6rv42z0vDc",
+            authDomain: "the-loft-hub-9538a.firebaseapp.com",
+            projectId: "the-loft-hub-9538a",
+            storageBucket: "the-loft-hub-9538a.firebasestorage.app",
+            messagingSenderId: "440048841718",
+            appId: "1:440048841718:web:f4457b27
