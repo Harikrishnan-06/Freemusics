@@ -59,11 +59,11 @@
 
                 <div class="flex flex-col items-center flex-1 px-10">
                     <div class="flex items-center space-x-6 mb-2">
-                        <button onclick="changeTrack(-1)" class="hover:text-green-500"><i class="fa fa-step-backward"></i></button>
-                        <button onclick="togglePlay()" id="playBtn" class="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center">
+                        <button onclick="changeTrack(-1)" class="hover:text-green-500 text-xl"><i class="fa fa-step-backward"></i></button>
+                        <button onclick="togglePlay()" id="playBtn" class="w-12 h-12 bg-white text-black rounded-full flex items-center justify-center transition hover:scale-110">
                             <i class="fa fa-play ml-1"></i>
                         </button>
-                        <button onclick="changeTrack(1)" class="hover:text-green-500"><i class="fa fa-step-forward"></i></button>
+                        <button onclick="changeTrack(1)" class="hover:text-green-500 text-xl"><i class="fa fa-step-forward"></i></button>
                     </div>
                     <div class="w-full flex items-center space-x-2">
                         <span id="time-c" class="text-[10px] text-gray-500">0:00</span>
@@ -74,9 +74,9 @@
                     </div>
                 </div>
 
-                <div class="w-1/4 flex justify-end space-x-3">
+                <div class="w-1/4 flex justify-end items-center space-x-3">
                     <i class="fa fa-volume-up text-gray-500 text-sm"></i>
-                    <input type="range" oninput="setVol(this.value)" class="w-20 accent-green-500">
+                    <input type="range" oninput="setVol(this.value)" min="0" max="100" value="100" class="w-20 accent-green-500 cursor-pointer">
                 </div>
             </footer>
         </main>
@@ -85,13 +85,48 @@
     <div id="player" class="hidden"></div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    <script>
+        // REPLACE WITH YOUR ACTUAL KEY
+        const YT_API_KEY = 'AIzaSyDp5b5le6VwUodJ5vgUAl0-pie1vysSJ3E'; 
         
-        const firebaseConfig = {
-            apiKey: "AIzaSyB6py7f_H_2QN78RD3wIVZPL6rv42z0vDc",
-            authDomain: "the-loft-hub-9538a.firebaseapp.com",
-            projectId: "the-loft-hub-9538a",
-            storageBucket: "the-loft-hub-9538a.firebasestorage.app",
-            messagingSenderId: "440048841718",
-            appId: "1:440048841718:web:f4457b27
+        let player, isPlaying = false, queue = [], currentIndex = 0;
+
+        // Initialize Player
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                events: {
+                    'onStateChange': onPlayerStateChange,
+                    'onReady': () => setInterval(syncProgress, 500)
+                }
+            });
+        }
+
+        // Fetch Songs via YouTube Data API
+        async function smartSearch(query) {
+            if (!query) return;
+            document.getElementById('listTitle').innerText = query;
+            
+            try {
+                const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&q=${encodeURIComponent(query)}&type=video&key=${YT_API_KEY}`);
+                const data = await response.json();
+                
+                if (data.items) {
+                    queue = data.items.map(item => ({
+                        id: item.id.videoId,
+                        title: item.snippet.title,
+                        artist: item.snippet.channelTitle,
+                        thumb: item.snippet.thumbnails.high.url
+                    }));
+                    renderResults();
+                }
+            } catch (error) {
+                console.error("Search Error:", error);
+            }
+        }
+
+        function renderResults() {
+            const container = document.getElementById('results');
+            container.innerHTML = queue.map((song, index) => `
+                <div onclick="playTrack(${index})" class="song-card glass p-4 rounded-3xl cursor-pointer">
+                    <img src="${song.thumb}" class="rounded-2xl mb-3 aspect-square object-cover shadow-lg">
+                    <h4 class="font-bold text-sm truncate">${song.title
