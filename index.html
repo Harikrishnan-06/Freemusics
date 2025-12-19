@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VibeStream Pro | Global Music</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: radial-gradient(circle at top left, #0f172a, #000000); min-height: 100vh; overflow: hidden; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .song-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .song-card:hover { transform: scale(1.05); background: rgba(255, 255, 255, 0.1); shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
+        .progress-glow { box-shadow: 0 0 10px #22c55e; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+    </style>
+</head>
+<body class="text-gray-100 font-sans">
+
+    <div class="flex h-screen p-4 gap-4">
+        <aside class="w-72 glass rounded-3xl p-6 flex flex-col hidden lg:flex">
+            <div class="flex items-center space-x-3 mb-10 px-2">
+                <div class="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-600 rounded-xl shadow-lg flex items-center justify-center">
+                    <i class="fa fa-play text-white"></i>
+                </div>
+                <h1 class="text-2xl font-black tracking-tighter">VIBE<span class="text-green-500">S</span></h1>
+            </div>
+            
+            <nav class="space-y-2 flex-1">
+                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-4 px-2">Discover Categories</p>
+                <button onclick="smartSearch('Hollywood Hits')" class="flex items-center space-x-4 w-full p-3 rounded-xl hover:bg-white/5 transition text-gray-400 hover:text-green-400">
+                    <i class="fa fa-clapperboard w-5"></i><span class="font-medium">Hollywood</span>
+                </button>
+                <button onclick="smartSearch('Bollywood Chartbusters')" class="flex items-center space-x-4 w-full p-3 rounded-xl hover:bg-white/5
